@@ -1,24 +1,24 @@
 package pickup.manager;
 import java.util.ArrayList;
-import pickup.file.PickupFile;
+import pickup.helper.Helpers;
 import pickup.model.PickupRecord;
 public class PickupManager {
    private ArrayList<PickupRecord> records;
-   private PickupFile file;
    public PickupManager() {
-       file = new PickupFile();
-       records = file.load();
+       Helpers.readPickupFile();
+       records = Helpers.getPickupRecords();
    }
    public void addRecord(PickupRecord record) {
        records.add(record);
-       file.save(records);
+       Helpers.writePickupFile();
    }
    public ArrayList<PickupRecord> getAllRecords() {
        return records;
    }
    public PickupRecord searchRecord(String recordId) {
        for (PickupRecord record : records) {
-           if (record.getRecordId().equalsIgnoreCase(recordId)) {
+           if (record.getRecordId()
+                   .equalsIgnoreCase(recordId)) {
                return record;
            }
        }
@@ -28,16 +28,18 @@ public class PickupManager {
        PickupRecord record = searchRecord(recordId);
        if (record != null) {
            records.remove(record);
-           file.save(records);
+           Helpers.writePickupFile();
            return true;
        }
        return false;
    }
    public boolean updateRecord(PickupRecord updatedRecord) {
        for (int i = 0; i < records.size(); i++) {
-           if (records.get(i).getRecordId().equalsIgnoreCase(updatedRecord.getRecordId())) {
+           if (records.get(i).getRecordId()
+                   .equalsIgnoreCase(
+                           updatedRecord.getRecordId())) {
                records.set(i, updatedRecord);
-               file.save(records);
+               Helpers.writePickupFile();
                return true;
            }
        }

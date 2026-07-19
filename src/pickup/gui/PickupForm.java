@@ -207,9 +207,9 @@ setLocationRelativeTo(null);
                                     .addComponent(jLabel4))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtCarId, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-                                    .addComponent(txtCustomerId)
-                                    .addComponent(txtRentalId)
+                                    .addComponent(txtRentalId, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                                    .addComponent(txtCustomerId, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtCarId, javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(txtRecordId)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -769,7 +769,6 @@ clearPickupFields();
 JOptionPane.showMessageDialog(this, "Pickup added successfully");
 
 
-
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
@@ -802,17 +801,16 @@ maintenanceManager.addRecord(record);
 loadMaintenanceTable();
 clearMaintenanceFields();
 JOptionPane.showMessageDialog(this,"Maintenance added successfully.");
+ 
     }//GEN-LAST:event_btnAddMaintenanceActionPerformed
 
     private void btnDeleteMaintenanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteMaintenanceActionPerformed
 String id = txtMaintenanceId.getText();
 if (maintenanceManager.deleteRecord(id)) {
    loadMaintenanceTable();
-   JOptionPane.showMessageDialog(this,
-           "Record deleted.");
+   JOptionPane.showMessageDialog(this,"Record deleted.");
 } else {
-   JOptionPane.showMessageDialog(this,
-           "Record not found.");
+   JOptionPane.showMessageDialog(this, "Record not found");
 }       
     }//GEN-LAST:event_btnDeleteMaintenanceActionPerformed
 
@@ -836,11 +834,9 @@ if (record != null) {
            txtReturnStatus.getText());
    pickupManager.updateRecord(record);
    loadPickupTable();
-   JOptionPane.showMessageDialog(this,
-           "Car Returned Successfully.");
+   JOptionPane.showMessageDialog(this, "Car Returned Successfully.");
 } else {
-   JOptionPane.showMessageDialog(this,
-           "Record Not Found.");
+   JOptionPane.showMessageDialog(this,"Record Not Found.");
 }        
     }//GEN-LAST:event_btnReturnActionPerformed
 
