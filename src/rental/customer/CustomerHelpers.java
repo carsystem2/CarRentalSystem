@@ -13,7 +13,11 @@ import java.util.ArrayList;
 public class CustomerHelpers {
   
 public static ArrayList<Customer> customers = new ArrayList<>();
-   
+  
+public static ArrayList<Customer> getCustomres()
+{
+    return customers;
+}
 public static boolean exists(String customerId) {
   for (Customer c : customers) {
     if (c.getCustomerId().trim().equalsIgnoreCase(customerId.trim())) {
