@@ -33,10 +33,10 @@ public class FrmSignIn extends javax.swing.JFrame {
         lable1 = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        txtPassword = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         btnLogin = new javax.swing.JButton();
         cmbRole = new javax.swing.JComboBox<>();
+        txtPassword = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,6 +61,8 @@ public class FrmSignIn extends javax.swing.JFrame {
 
         cmbRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "User" }));
 
+        txtPassword.setText("jPasswordField1");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -76,8 +78,8 @@ public class FrmSignIn extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtUsername)
-                            .addComponent(txtPassword)
-                            .addComponent(cmbRole, 0, 141, Short.MAX_VALUE)))
+                            .addComponent(cmbRole, 0, 141, Short.MAX_VALUE)
+                            .addComponent(txtPassword)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(45, 45, 45)
                         .addComponent(btnLogin)))
@@ -134,7 +136,7 @@ public class FrmSignIn extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
           String username = txtUsername.getText();
-          String password = txtPassword.getText();
+          String password = new String (txtPassword.getPassword());
           String selectedRole = cmbRole.getSelectedItem().toString();
         
         if (username.isEmpty() || password.isEmpty()) {
@@ -200,7 +202,7 @@ public class FrmSignIn extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lable1;
-    private javax.swing.JTextField txtPassword;
+    private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }
