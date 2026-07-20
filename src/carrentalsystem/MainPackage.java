@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package carrentalsystem;
-import car.CarFleetGUI;
 import rental.customer.CostomerForm;
 import booking.BookingGUI;
 import pickup.gui.PickupForm;
@@ -97,7 +96,7 @@ new BookingGUI().setVisible(true);        // TODO add your handling code here:
     }//GEN-LAST:event_btnBookingActionPerformed
 
     private void btnCarFleetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarFleetActionPerformed
-new CarFleetGUI().setVisible(true);      // TODO add your handling code here:
+new car.CarFleetForm().setVisible(true);      // TODO add your handling code here:
     }//GEN-LAST:event_btnCarFleetActionPerformed
 
     private void btnCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCustomerActionPerformed
