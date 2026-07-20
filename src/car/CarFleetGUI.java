@@ -1,45 +1,52 @@
 package car;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class CarFleetGUI extends JFrame {
-    private final CarManager manager = new CarManager();
 
-    private final JTextField txtCarId = new JTextField();
-    private final JTextField txtPlate = new JTextField();
-    private final JTextField txtBrand = new JTextField();
-    private final JTextField txtModel = new JTextField();
-    private final JTextField txtYear = new JTextField();
-    private final JTextField txtRent = new JTextField();
-    private final JTextField txtMileage = new JTextField();
-    private final JTextField txtSearch = new JTextField(25);
+    private CarManager manager = new CarManager();
 
-    private final JComboBox<String> cmbType = new JComboBox<String>(
-            new String[]{"Sedan", "SUV", "Van", "Luxury", "Economy"});
+    // Input fields
+    private JTextField idField = new JTextField();
+    private JTextField plateField = new JTextField();
+    private JTextField brandField = new JTextField();
+    private JTextField modelField = new JTextField();
+    private JTextField yearField = new JTextField();
+    private JTextField rentField = new JTextField();
+    private JTextField mileageField = new JTextField();
+    private JTextField searchField = new JTextField(20);
 
-    private final JComboBox<String> cmbStatus = new JComboBox<String>(
-            new String[]{"AVAILABLE", "BOOKED", "RENTED", "MAINTENANCE", "RETIRED"});
+    // Combo boxes
+    private JComboBox<String> typeBox;
+    private JComboBox<String> statusBox;
 
-    private final DefaultTableModel tableModel = new DefaultTableModel(
-            new String[]{"Car ID", "Plate", "Brand", "Model", "Year",
-                         "Type", "Daily Rent", "Mileage", "Status"}, 0) {
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-    };
+    // Table
+    private JTable carTable;
+    private DefaultTableModel tableModel;
 
-    private final JTable table = new JTable(tableModel);
+    // Colors
+    private Color backgroundColor = new Color(240, 244, 248);
+    private Color darkBlue = new Color(40, 70, 110);
+    private Color greenColor = new Color(60, 150, 90);
+    private Color blueColor = new Color(65, 120, 190);
+    private Color redColor = new Color(190, 70, 70);
+    private Color grayColor = new Color(110, 115, 120);
 
     public CarFleetGUI() {
+
         setTitle("Car Fleet Management System");
-        setSize(1050, 650);
+        setSize(1100, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        // Main tabs
         JTabbedPane tabs = new JTabbedPane();
+
+        tabs.setFont(new Font("Arial", Font.BOLD, 15));
+
         tabs.addTab("Car Form", createFormPanel());
         tabs.addTab("View Cars", createTablePanel());
         tabs.addTab("Search", createSearchPanel());
@@ -47,256 +54,733 @@ public class CarFleetGUI extends JFrame {
         tabs.addTab("Report", createReportPanel());
 
         add(tabs);
+
         refreshTable();
     }
 
+    // Create Add, Edit and Delete form
     private JPanel createFormPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JPanel form = new JPanel(new GridLayout(9, 2, 10, 10));
-
-        form.add(new JLabel("Car ID:")); form.add(txtCarId);
-        form.add(new JLabel("Plate Number:")); form.add(txtPlate);
-        form.add(new JLabel("Brand:")); form.add(txtBrand);
-        form.add(new JLabel("Model:")); form.add(txtModel);
-        form.add(new JLabel("Manufacturing Year:")); form.add(txtYear);
-        form.add(new JLabel("Car Type:")); form.add(cmbType);
-        form.add(new JLabel("Daily Rental Price:")); form.add(txtRent);
-        form.add(new JLabel("Mileage:")); form.add(txtMileage);
-        form.add(new JLabel("Status:")); form.add(cmbStatus);
-
-        JPanel buttons = new JPanel();
-        JButton add = new JButton("Add Car");
-        JButton edit = new JButton("Edit Car");
-        JButton delete = new JButton("Delete Car");
-        JButton clear = new JButton("Clear");
-
-        buttons.add(add);
-        buttons.add(edit);
-        buttons.add(delete);
-        buttons.add(clear);
-
-        add.addActionListener(e -> addCar());
-        edit.addActionListener(e -> editCar());
-        delete.addActionListener(e -> deleteCar());
-        clear.addActionListener(e -> clearFields());
-
-        panel.add(form, BorderLayout.CENTER);
-        panel.add(buttons, BorderLayout.SOUTH);
-
-        return panel;
-    }
-
-    private JPanel createTablePanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        table.setRowHeight(24);
-
-        table.getSelectionModel().addListSelectionListener(e -> {
-            int row = table.getSelectedRow();
-
-            if (row >= 0) {
-                txtCarId.setText(tableModel.getValueAt(row, 0).toString());
-                txtPlate.setText(tableModel.getValueAt(row, 1).toString());
-                txtBrand.setText(tableModel.getValueAt(row, 2).toString());
-                txtModel.setText(tableModel.getValueAt(row, 3).toString());
-                txtYear.setText(tableModel.getValueAt(row, 4).toString());
-                cmbType.setSelectedItem(tableModel.getValueAt(row, 5).toString());
-                txtRent.setText(tableModel.getValueAt(row, 6).toString());
-                txtMileage.setText(tableModel.getValueAt(row, 7).toString());
-                cmbStatus.setSelectedItem(tableModel.getValueAt(row, 8).toString());
-            }
-        });
-
-        JButton refresh = new JButton("Refresh");
-        refresh.addActionListener(e -> refreshTable());
-
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
-        panel.add(refresh, BorderLayout.SOUTH);
-
-        return panel;
-    }
-
-    private JPanel createSearchPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-
-        JPanel top = new JPanel();
-        JButton search = new JButton("Search");
-        JButton showAll = new JButton("Show All");
-
-        top.add(new JLabel("Search:"));
-        top.add(txtSearch);
-        top.add(search);
-        top.add(showAll);
-
-        search.addActionListener(e -> loadTable(manager.searchCars(txtSearch.getText().trim())));
-        showAll.addActionListener(e -> refreshTable());
-
-        panel.add(top, BorderLayout.NORTH);
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
-
-        return panel;
-    }
-
-    private JPanel createStatusPanel() {
-        JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
-
-        JTextField idField = new JTextField();
-        JComboBox<String> newStatus = new JComboBox<String>(
-                new String[]{"AVAILABLE", "BOOKED", "RENTED", "MAINTENANCE", "RETIRED"});
-
-        JButton update = new JButton("Update Status");
-
-        panel.add(new JLabel("Car ID:")); panel.add(idField);
-        panel.add(new JLabel("New Status:")); panel.add(newStatus);
-        panel.add(new JLabel("")); panel.add(update);
-
-        update.addActionListener(e -> {
-            if (manager.updateStatus(idField.getText().trim(),
-                    newStatus.getSelectedItem().toString())) {
-                JOptionPane.showMessageDialog(this, "Status updated successfully.");
-                refreshTable();
-            } else {
-                JOptionPane.showMessageDialog(this, "Car ID not found.");
-            }
-        });
-
-        return panel;
-    }
-
-    private JPanel createReportPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-
-        JTextArea area = new JTextArea();
-        area.setEditable(false);
-        area.setFont(new Font("Monospaced", Font.PLAIN, 16));
-
-        JButton report = new JButton("Generate Report");
-
-        report.addActionListener(e -> area.setText(
-                "CAR FLEET REPORT\n" +
-                "----------------------------\n" +
-                "Total Cars: " + manager.getAllCars().size() + "\n" +
-                "Available: " + manager.countByStatus("AVAILABLE") + "\n" +
-                "Booked: " + manager.countByStatus("BOOKED") + "\n" +
-                "Rented: " + manager.countByStatus("RENTED") + "\n" +
-                "Maintenance: " + manager.countByStatus("MAINTENANCE") + "\n" +
-                "Retired: " + manager.countByStatus("RETIRED")
-        ));
-
-        panel.add(new JScrollPane(area), BorderLayout.CENTER);
-        panel.add(report, BorderLayout.SOUTH);
-
-        return panel;
-    }
-
-    private Car readCarFromFields() {
-        return new Car(
-                txtCarId.getText().trim(),
-                txtPlate.getText().trim(),
-                txtBrand.getText().trim(),
-                txtModel.getText().trim(),
-                Integer.parseInt(txtYear.getText().trim()),
-                cmbType.getSelectedItem().toString(),
-                Double.parseDouble(txtRent.getText().trim()),
-                Integer.parseInt(txtMileage.getText().trim()),
-                cmbStatus.getSelectedItem().toString()
+        JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
+        mainPanel.setBackground(backgroundColor);
+        mainPanel.setBorder(
+                BorderFactory.createEmptyBorder(20, 30, 20, 30)
         );
+
+        JLabel title = new JLabel("Car Information");
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 25));
+        title.setForeground(darkBlue);
+
+        mainPanel.add(title, BorderLayout.NORTH);
+
+        JPanel formPanel = new JPanel(new GridLayout(9, 2, 15, 15));
+        formPanel.setBackground(backgroundColor);
+
+        String[] carTypes = {
+            "Sedan",
+            "SUV",
+            "Van",
+            "Luxury",
+            "Economy"
+        };
+
+        typeBox = new JComboBox<String>(carTypes);
+
+        String[] statuses = {
+            "AVAILABLE",
+            "BOOKED",
+            "RENTED",
+            "MAINTENANCE",
+            "RETIRED"
+        };
+
+        statusBox = new JComboBox<String>(statuses);
+
+        addFormRow(formPanel, "Car ID:", idField);
+        addFormRow(formPanel, "Plate Number:", plateField);
+        addFormRow(formPanel, "Brand:", brandField);
+        addFormRow(formPanel, "Model:", modelField);
+        addFormRow(formPanel, "Manufacturing Year:", yearField);
+        addFormRow(formPanel, "Car Type:", typeBox);
+        addFormRow(formPanel, "Daily Rental Price:", rentField);
+        addFormRow(formPanel, "Mileage:", mileageField);
+        addFormRow(formPanel, "Status:", statusBox);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(backgroundColor);
+
+        JButton addButton = createButton("Add Car", greenColor);
+        JButton editButton = createButton("Edit Car", blueColor);
+        JButton deleteButton = createButton("Delete Car", redColor);
+        JButton clearButton = createButton("Clear", grayColor);
+
+        buttonPanel.add(addButton);
+        buttonPanel.add(editButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(clearButton);
+
+        addButton.addActionListener(e -> addCar());
+        editButton.addActionListener(e -> editCar());
+        deleteButton.addActionListener(e -> deleteCar());
+        clearButton.addActionListener(e -> clearFields());
+
+        mainPanel.add(formPanel, BorderLayout.CENTER);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        return mainPanel;
     }
 
-    private boolean fieldsValid() {
-        if (txtCarId.getText().trim().isEmpty()
-                || txtPlate.getText().trim().isEmpty()
-                || txtBrand.getText().trim().isEmpty()
-                || txtModel.getText().trim().isEmpty()
-                || txtYear.getText().trim().isEmpty()
-                || txtRent.getText().trim().isEmpty()
-                || txtMileage.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill all fields.");
+    // Add label and input component to the form
+    private void addFormRow(
+            JPanel panel,
+            String text,
+            JComponent component) {
+
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Arial", Font.BOLD, 15));
+        label.setForeground(new Color(50, 50, 50));
+
+        component.setFont(new Font("Arial", Font.PLAIN, 15));
+
+        panel.add(label);
+        panel.add(component);
+    }
+
+    // Create button with same style
+    private JButton createButton(String text, Color color) {
+
+        JButton button = new JButton(text);
+
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setPreferredSize(new Dimension(135, 40));
+        button.setBackground(color);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+
+        return button;
+    }
+
+    // Create cars table
+    private JPanel createTablePanel() {
+
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBackground(backgroundColor);
+        panel.setBorder(
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        );
+
+        JLabel title = new JLabel("All Cars");
+        title.setFont(new Font("Arial", Font.BOLD, 23));
+        title.setForeground(darkBlue);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+
+        String[] columns = {
+            "Car ID",
+            "Plate",
+            "Brand",
+            "Model",
+            "Year",
+            "Type",
+            "Daily Rent",
+            "Mileage",
+            "Status"
+        };
+
+        tableModel = new DefaultTableModel(columns, 0) {
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        carTable = new JTable(tableModel);
+
+        carTable.setFont(new Font("Arial", Font.PLAIN, 14));
+        carTable.setRowHeight(28);
+        carTable.getTableHeader().setFont(
+                new Font("Arial", Font.BOLD, 14)
+        );
+
+        carTable.getSelectionModel()
+                .addListSelectionListener(e -> {
+
+            if (!e.getValueIsAdjusting()) {
+                copySelectedCarToFields();
+            }
+        });
+
+        JButton refreshButton =
+                createButton("Refresh Table", darkBlue);
+
+        refreshButton.addActionListener(e -> refreshTable());
+
+        panel.add(title, BorderLayout.NORTH);
+        panel.add(new JScrollPane(carTable), BorderLayout.CENTER);
+        panel.add(refreshButton, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    // Create search page
+    private JPanel createSearchPanel() {
+
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBackground(backgroundColor);
+        panel.setBorder(
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        );
+
+        JPanel topPanel = new JPanel();
+        topPanel.setBackground(backgroundColor);
+
+        JLabel label = new JLabel("Search:");
+        label.setFont(new Font("Arial", Font.BOLD, 16));
+
+        searchField.setFont(new Font("Arial", Font.PLAIN, 15));
+
+        JButton searchButton =
+                createButton("Search", blueColor);
+
+        JButton showAllButton =
+                createButton("Show All", grayColor);
+
+        topPanel.add(label);
+        topPanel.add(searchField);
+        topPanel.add(searchButton);
+        topPanel.add(showAllButton);
+
+        String[] columns = {
+            "Car ID",
+            "Plate",
+            "Brand",
+            "Model",
+            "Year",
+            "Type",
+            "Daily Rent",
+            "Mileage",
+            "Status"
+        };
+
+        DefaultTableModel searchModel =
+                new DefaultTableModel(columns, 0) {
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        JTable searchTable = new JTable(searchModel);
+
+        searchTable.setFont(new Font("Arial", Font.PLAIN, 14));
+        searchTable.setRowHeight(28);
+
+        searchButton.addActionListener(e -> {
+
+            String word = searchField.getText().trim();
+
+            if (word.isEmpty()) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Please enter a search value."
+                );
+
+                return;
+            }
+
+            ArrayList<Car> result =
+                    manager.searchCars(word);
+
+            loadCarsToTable(searchModel, result);
+
+            if (result.isEmpty()) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No cars were found."
+                );
+            }
+        });
+
+        showAllButton.addActionListener(e -> {
+
+            searchField.setText("");
+
+            loadCarsToTable(
+                    searchModel,
+                    manager.getAllCars()
+            );
+        });
+
+        loadCarsToTable(
+                searchModel,
+                manager.getAllCars()
+        );
+
+        panel.add(topPanel, BorderLayout.NORTH);
+        panel.add(new JScrollPane(searchTable), BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    // Create status update page
+    private JPanel createStatusPanel() {
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(backgroundColor);
+        mainPanel.setBorder(
+                BorderFactory.createEmptyBorder(50, 100, 50, 100)
+        );
+
+        JLabel title = new JLabel("Update Car Status");
+        title.setFont(new Font("Arial", Font.BOLD, 25));
+        title.setForeground(darkBlue);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JPanel form = new JPanel(new GridLayout(3, 2, 15, 20));
+        form.setBackground(backgroundColor);
+
+        JTextField statusIdField = new JTextField();
+
+        JComboBox<String> newStatusBox =
+                new JComboBox<String>(
+                        new String[]{
+                            "AVAILABLE",
+                            "BOOKED",
+                            "RENTED",
+                            "MAINTENANCE",
+                            "RETIRED"
+                        }
+                );
+
+        JLabel idLabel = new JLabel("Car ID:");
+        JLabel statusLabel = new JLabel("New Status:");
+
+        idLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        statusLabel.setFont(new Font("Arial", Font.BOLD, 16));
+
+        statusIdField.setFont(new Font("Arial", Font.PLAIN, 15));
+        newStatusBox.setFont(new Font("Arial", Font.PLAIN, 15));
+
+        JButton updateButton =
+                createButton("Update Status", blueColor);
+
+        form.add(idLabel);
+        form.add(statusIdField);
+
+        form.add(statusLabel);
+        form.add(newStatusBox);
+
+        form.add(new JLabel(""));
+        form.add(updateButton);
+
+        updateButton.addActionListener(e -> {
+
+            String id = statusIdField.getText().trim();
+
+            if (id.isEmpty()) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Please enter the Car ID."
+                );
+
+                return;
+            }
+
+            String newStatus =
+                    newStatusBox.getSelectedItem().toString();
+
+            boolean updated =
+                    manager.updateStatus(id, newStatus);
+
+            if (updated) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Car status updated successfully."
+                );
+
+                statusIdField.setText("");
+                refreshTable();
+
+            } else {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Car ID not found."
+                );
+            }
+        });
+
+        mainPanel.add(title, BorderLayout.NORTH);
+        mainPanel.add(form, BorderLayout.CENTER);
+            return mainPanel;
+    }
+
+    // Create report page
+    private JPanel createReportPanel() {
+
+        JPanel panel = new JPanel(new BorderLayout(15, 15));
+        panel.setBackground(backgroundColor);
+        panel.setBorder(
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        );
+
+        JLabel title = new JLabel("Car Fleet Report");
+        title.setFont(new Font("Arial", Font.BOLD, 25));
+        title.setForeground(darkBlue);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JTextArea reportArea = new JTextArea();
+
+        reportArea.setEditable(false);
+        reportArea.setFont(
+                new Font("Monospaced", Font.PLAIN, 17)
+        );
+
+        reportArea.setBorder(
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        );
+
+        JButton reportButton =
+                createButton("Generate Report", darkBlue);
+
+        reportButton.addActionListener(e -> {
+
+            String report =
+                    "CAR FLEET REPORT\n"
+                    + "----------------------------------\n"
+                    + "Total Cars: "
+                    + manager.getAllCars().size()
+                    + "\n\n"
+                    + "Available Cars: "
+                    + manager.countByStatus("AVAILABLE")
+                    + "\n"
+                    + "Booked Cars: "
+                    + manager.countByStatus("BOOKED")
+                    + "\n"
+                    + "Rented Cars: "
+                    + manager.countByStatus("RENTED")
+                    + "\n"
+                    + "Maintenance Cars: "
+                    + manager.countByStatus("MAINTENANCE")
+                    + "\n"
+                    + "Retired Cars: "
+                    + manager.countByStatus("RETIRED");
+
+            reportArea.setText(report);
+        });
+
+        panel.add(title, BorderLayout.NORTH);
+        panel.add(new JScrollPane(reportArea), BorderLayout.CENTER);
+        panel.add(reportButton, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    // Add new car
+    private void addCar() {
+
+        try {
+
+            if (!fieldsAreValid()) {
+                return;
+            }
+
+            Car car = getCarFromFields();
+
+            boolean added = manager.addCar(car);
+
+            if (added) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Car added successfully."
+                );
+
+                refreshTable();
+                clearFields();
+
+            } else {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Car ID already exists."
+                );
+            }
+
+        } catch (NumberFormatException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Year, rent, and mileage must be numbers."
+            );
+        }
+    }
+
+    // Edit existing car
+    private void editCar() {
+
+        try {
+
+            if (!fieldsAreValid()) {
+                return;
+            }
+
+            Car car = getCarFromFields();
+
+            boolean updated = manager.updateCar(car);
+
+            if (updated) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Car updated successfully."
+                );
+
+                refreshTable();
+                clearFields();
+
+            } else {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Car ID not found."
+                );
+            }
+
+        } catch (NumberFormatException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Year, rent, and mileage must be numbers."
+            );
+        }
+    }
+
+    // Delete car
+    private void deleteCar() {
+
+        String id = idField.getText().trim();
+
+        if (id.isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter the Car ID."
+            );
+
+            return;
+        }
+
+        int answer = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to delete this car?",
+                "Delete Car",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (answer == JOptionPane.YES_OPTION) {
+
+            boolean deleted = manager.deleteCar(id);
+
+            if (deleted) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Car deleted successfully."
+                );
+
+                refreshTable();
+                clearFields();
+
+            } else {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Car ID not found."
+                );
+            }
+        }
+    }
+
+    // Check fields
+    private boolean fieldsAreValid() {
+
+        if (idField.getText().trim().isEmpty()
+                || plateField.getText().trim().isEmpty()
+                || brandField.getText().trim().isEmpty()
+                || modelField.getText().trim().isEmpty()
+                || yearField.getText().trim().isEmpty()
+                || rentField.getText().trim().isEmpty()
+                || mileageField.getText().trim().isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please fill in all fields."
+            );
+
+            return false;
+        }
+
+        int year = Integer.parseInt(
+                yearField.getText().trim()
+        );
+
+        double rent = Double.parseDouble(
+                rentField.getText().trim()
+        );
+
+        int mileage = Integer.parseInt(
+                mileageField.getText().trim()
+        );
+
+        if (year < 1900 || year > 2030) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter a valid year."
+            );
+
+            return false;
+        }
+
+        if (rent < 0 || mileage < 0) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Rent and mileage cannot be negative."
+            );
+
             return false;
         }
 
         return true;
     }
 
-    private void addCar() {
-        try {
-            if (!fieldsValid()) return;
+    // Read information from input fields
+    private Car getCarFromFields() {
 
-            if (manager.addCar(readCarFromFields())) {
-                JOptionPane.showMessageDialog(this, "Car added successfully.");
-                refreshTable();
-                clearFields();
-            } else {
-                JOptionPane.showMessageDialog(this, "Car ID already exists.");
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Year, rent and mileage must be numbers.");
-        }
+        return new Car(
+                idField.getText().trim(),
+                plateField.getText().trim(),
+                brandField.getText().trim(),
+                modelField.getText().trim(),
+                Integer.parseInt(yearField.getText().trim()),
+                typeBox.getSelectedItem().toString(),
+                Double.parseDouble(rentField.getText().trim()),
+                Integer.parseInt(mileageField.getText().trim()),
+                statusBox.getSelectedItem().toString()
+        );
     }
 
-    private void editCar() {
-        try {
-            if (!fieldsValid()) return;
-
-            if (manager.updateCar(readCarFromFields())) {
-                JOptionPane.showMessageDialog(this, "Car updated successfully.");
-                refreshTable();
-                clearFields();
-            } else {
-                JOptionPane.showMessageDialog(this, "Car ID not found.");
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Year, rent and mileage must be numbers.");
-        }
-    }
-
-    private void deleteCar() {
-        if (manager.deleteCar(txtCarId.getText().trim())) {
-            JOptionPane.showMessageDialog(this, "Car deleted successfully.");
-            refreshTable();
-            clearFields();
-        } else {
-            JOptionPane.showMessageDialog(this, "Car ID not found.");
-        }
-    }
-
+    // Show cars in main table
     private void refreshTable() {
-        loadTable(manager.getAllCars());
+
+        if (tableModel != null) {
+
+            loadCarsToTable(
+                    tableModel,
+                    manager.getAllCars()
+            );
+        }
     }
 
-    private void loadTable(ArrayList<Car> cars) {
-        tableModel.setRowCount(0);
+    // Add cars to any table
+    private void loadCarsToTable(
+            DefaultTableModel model,
+            ArrayList<Car> cars) {
+
+        model.setRowCount(0);
 
         for (Car car : cars) {
-            tableModel.addRow(new Object[]{
-                    car.getCarId(),
-                    car.getPlateNumber(),
-                    car.getBrand(),
-                    car.getModel(),
-                    car.getYear(),
-                    car.getCarType(),
-                    car.getDailyRent(),
-                    car.getMileage(),
-                    car.getStatus()
+
+            model.addRow(new Object[]{
+                car.getCarId(),
+                car.getPlateNumber(),
+                car.getBrand(),
+                car.getModel(),
+                car.getYear(),
+                car.getCarType(),
+                car.getDailyRent(),
+                car.getMileage(),
+                car.getStatus()
             });
         }
     }
 
+    // Copy selected table row to fields
+    private void copySelectedCarToFields() {
+
+        int row = carTable.getSelectedRow();
+
+        if (row >= 0) {
+
+            idField.setText(
+                    tableModel.getValueAt(row, 0).toString()
+            );
+
+            plateField.setText(
+                    tableModel.getValueAt(row, 1).toString()
+            );
+
+            brandField.setText(
+                    tableModel.getValueAt(row, 2).toString()
+            );
+
+            modelField.setText(
+                    tableModel.getValueAt(row, 3).toString()
+            );yearField.setText(
+                    tableModel.getValueAt(row, 4).toString()
+            );
+
+            typeBox.setSelectedItem(
+                    tableModel.getValueAt(row, 5).toString()
+            );
+
+            rentField.setText(
+                    tableModel.getValueAt(row, 6).toString()
+            );
+
+            mileageField.setText(
+                    tableModel.getValueAt(row, 7).toString()
+            );
+
+            statusBox.setSelectedItem(
+                    tableModel.getValueAt(row, 8).toString()
+            );
+        }
+    }
+
+    // Clear input fields
     private void clearFields() {
-        txtCarId.setText("");
-        txtPlate.setText("");
-        txtBrand.setText("");
-        txtModel.setText("");
-        txtYear.setText("");
-        txtRent.setText("");
-        txtMileage.setText("");
-        cmbType.setSelectedIndex(0);
-        cmbStatus.setSelectedIndex(0);
+
+        idField.setText("");
+        plateField.setText("");
+        brandField.setText("");
+        modelField.setText("");
+        yearField.setText("");
+        rentField.setText("");
+        mileageField.setText("");
+
+        typeBox.setSelectedIndex(0);
+        statusBox.setSelectedIndex(0);
+
+        if (carTable != null) {
+            carTable.clearSelection();
+        }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new CarFleetGUI().setVisible(true));
+
+        SwingUtilities.invokeLater(() -> {
+
+            CarFleetGUI window = new CarFleetGUI();
+            window.setVisible(true);
+        });
     }
 }

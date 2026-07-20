@@ -1,0 +1,1 @@
+c010|KUW-4582|Toyota|corolla|2024|Sedan|18.5|12000|MAINTENANCE
