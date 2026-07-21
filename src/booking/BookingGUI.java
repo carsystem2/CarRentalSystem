@@ -4,9 +4,6 @@
  */
 package booking;
 
-
-
-
 import rental.customer.Customer;
 import rental.customer.CustomerHelpers;
 import car.Car;
@@ -15,189 +12,301 @@ import javax.swing.table.DefaultTableModel;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
+
 /**
  *
  * @author aldanai
  */
 public class BookingGUI extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BookingGUI.class.getName());
-    
+
     private BookingManager bookingManager = new BookingManager();
     private CarManager carManager = new CarManager();
 
-    /**
-     * Creates new form BookingGUI
-     */
-   public BookingGUI() {
-    initComponents();
+    public BookingGUI() {
+        initComponents();
 
-    loadCustomers();
-    loadCars();
-    loadTable();
-}
-   
- private void loadCustomers() {
-
-    cmbCustomer.removeAllItems();
-
-    CustomerHelpers.readFile();
-
-    for (Customer customer : CustomerHelpers.getCustomres()) {
-
-        cmbCustomer.addItem(
-                customer.getCustomerId() + " - " + customer.getCustomerName()
-        );
-
+        loadCustomers();
+        loadCars();
+        loadTable();
     }
 
-}
+    private void loadCustomers() {
 
-private void loadCars() {
+        cmbCustomer.removeAllItems();
 
-    cmbCar.removeAllItems();
+        CustomerHelpers.readFile();
 
-    for (Car car : carManager.getAllCars()) {
+        for (Customer customer : CustomerHelpers.getCustomres()) {
 
-        if (car.getStatus().equalsIgnoreCase("Available")) {
-
-            cmbCar.addItem(
-                    car.getCarId() + " - " +
-                    car.getBrand() + " " +
-                    car.getModel()
+            cmbCustomer.addItem(
+                    customer.getCustomerId() + " - " + customer.getCustomerName()
             );
 
         }
 
     }
 
-}
-private void loadTable() {
+    private void loadCars() {
 
-    DefaultTableModel model =
-            (DefaultTableModel) tblBookings.getModel();
+        cmbCar.removeAllItems();
 
-    model.setRowCount(0);
+        for (Car car : carManager.getAllCars()) {
 
-    for (RentalBooking booking : bookingManager.getBookings()) {
+            if (car.getStatus().equalsIgnoreCase("Available")) {
 
-        model.addRow(new Object[]{
-            booking.getRentalId(),
-            booking.getCustomerName(),
-            booking.getCarId(),
-            booking.getStartDate(),
-            booking.getEndDate(),
-            booking.getPickupLocation(),
-            booking.getReturnLocation(),
-            booking.getDailyRent(),
-            booking.getNumberOfDays(),
-            booking.getEstimatedAmount(),
-            booking.getBookingStatus()
-        });
+                cmbCar.addItem(
+                        car.getCarId() + " - "
+                        + car.getBrand() + " "
+                        + car.getModel()
+                );
+
+            }
+
+        }
 
     }
 
-}
+    private void loadTable() {
 
-private void clearFields() {
+        DefaultTableModel model
+                = (DefaultTableModel) tblBookings.getModel();
 
-    txtRentalID.setText("");
-    txtStartDate.setText("");
-    txtEndDate.setText("");
-    txtPickupLocation.setText("");
-    txtReturnLocation.setText("");
+        model.setRowCount(0);
 
-    lblDailyRent.setText("-");
-    lblDays.setText("-");
-    lblAmount.setText("-");
+        for (RentalBooking booking : bookingManager.getBookings()) {
+            Car car = carManager.findCarById(booking.getCarId());
 
-    cmbCustomer.setSelectedIndex(-1);
-    cmbCar.setSelectedIndex(-1);
-}
+            String carInfo = booking.getCarId();
 
-private boolean validateFields() {
+            if (car != null) {
+                carInfo = car.getCarId() + " - "
+                        + car.getBrand();
+            }
+            model.addRow(new Object[]{
+                booking.getRentalId(),
+                booking.getCustomerName(),
+                carInfo,
+                booking.getStartDate(),
+                booking.getEndDate(),
+                booking.getPickupLocation(),
+                booking.getReturnLocation(),
+                booking.getDailyRent(),
+                booking.getNumberOfDays(),
+                booking.getEstimatedAmount(),
+                booking.getBookingStatus()
+            });
 
-    if (txtRentalID.getText().trim().isEmpty())
-        return false;
+        }
 
-    if (cmbCustomer.getSelectedIndex() == -1)
-        return false;
+    }
 
-    if (cmbCar.getSelectedIndex() == -1)
-        return false;
+    private void clearFields() {
 
-    if (txtStartDate.getText().trim().isEmpty())
-        return false;
+        txtRentalID.setText("");
+        txtStartDate.setText("");
+        txtEndDate.setText("");
+        txtPickupLocation.setText("");
+        txtReturnLocation.setText("");
 
-    if (txtEndDate.getText().trim().isEmpty())
-        return false;
+        lblDailyRent.setText("-");
+        lblDays.setText("-");
+        lblAmount.setText("-");
 
-    if (txtPickupLocation.getText().trim().isEmpty())
-        return false;
+        cmbCustomer.setSelectedIndex(-1);
+        cmbCar.setSelectedIndex(-1);
+    }
 
-    if (txtReturnLocation.getText().trim().isEmpty())
-        return false;
+    private boolean validateFields() {
 
-    return true;
-}
+        return validateEmptyFields()
+                && validateRentalId()
+                && validateLocations();
 
+    }
 
-private boolean calculateBookingInfo() {
+    private boolean validateEmptyFields() {
 
-    try {
-
-        DateTimeFormatter formatter =
-                DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-        LocalDate start =
-                LocalDate.parse(txtStartDate.getText().trim(), formatter);
-
-        LocalDate end =
-                LocalDate.parse(txtEndDate.getText().trim(), formatter);
-
-        if (!end.isAfter(start)) {
-            javax.swing.JOptionPane.showMessageDialog(
-                    this,
-                    "End Date must be after Start Date."
-            );
+        if (txtRentalID.getText().trim().isEmpty()) {
             return false;
         }
 
-        long days = ChronoUnit.DAYS.between(start, end);
-
-        lblDays.setText(String.valueOf(days));
-
-        String selectedCar = cmbCar.getSelectedItem().toString();
-        String carId = selectedCar.split(" - ")[0];
-
-        Car car = carManager.findCarById(carId);
-
-        if (car == null) {
-            javax.swing.JOptionPane.showMessageDialog(
-                    this,
-                    "Car not found."
-            );
+        if (cmbCustomer.getSelectedIndex() == -1) {
             return false;
         }
 
-        lblDailyRent.setText(String.valueOf(car.getDailyRent()));
+        if (cmbCar.getSelectedIndex() == -1) {
+            return false;
+        }
 
-        double amount = days * car.getDailyRent();
+        if (txtStartDate.getText().trim().isEmpty()) {
+            return false;
+        }
 
-        lblAmount.setText(String.format("%.3f", amount));
+        if (txtEndDate.getText().trim().isEmpty()) {
+            return false;
+        }
+
+        if (txtPickupLocation.getText().trim().isEmpty()) {
+            return false;
+        }
+
+        if (txtReturnLocation.getText().trim().isEmpty()) {
+            return false;
+        }
 
         return true;
-
-    } catch (Exception e) {
-
-        javax.swing.JOptionPane.showMessageDialog(
-                this,
-                "Please enter dates in DD-MM-YYYY format."
-        );
-
-        return false;
     }
-}
+
+    private boolean validateRentalId() {
+
+        if (bookingManager.findBookingById(txtRentalID.getText()) != null) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Rental ID already exists."
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateLocations() {
+
+        if (!txtPickupLocation.getText().matches("[a-zA-Z ]+")) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Pickup location must contain letters only."
+            );
+
+            return false;
+        }
+
+        if (!txtReturnLocation.getText().matches("[a-zA-Z ]+")) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Return location must contain letters only."
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isCarAvailable(String carId, String startDate, String endDate) {
+
+        DateTimeFormatter formatter
+                = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        LocalDate newStart = LocalDate.parse(startDate, formatter);
+        LocalDate newEnd = LocalDate.parse(endDate, formatter);
+
+        for (RentalBooking booking : bookingManager.getBookings()) {
+
+            if (!booking.getCarId().equals(carId)) {
+                continue;
+            }
+
+            LocalDate bookedStart
+                    = LocalDate.parse(booking.getStartDate(), formatter);
+
+            LocalDate bookedEnd
+                    = LocalDate.parse(booking.getEndDate(), formatter);
+
+            if (!(newEnd.isBefore(bookedStart)
+                    || newStart.isAfter(bookedEnd))) {
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean calculateBookingInfo() {
+
+        try {
+
+            DateTimeFormatter formatter
+                    = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+            LocalDate start
+                    = LocalDate.parse(txtStartDate.getText().trim(), formatter);
+
+            LocalDate end
+                    = LocalDate.parse(txtEndDate.getText().trim(), formatter);
+
+            LocalDate today = LocalDate.now();
+
+            if (start.isBefore(today)) {
+
+                javax.swing.JOptionPane.showMessageDialog(
+                        this,
+                        "Start date cannot be before today."
+                );
+
+                return false;
+            }
+
+            if (end.isAfter(today.plusYears(2))) {
+
+                javax.swing.JOptionPane.showMessageDialog(
+                        this,
+                        "End date is too far."
+                );
+
+                return false;
+            }
+
+            if (!end.isAfter(start)) {
+                javax.swing.JOptionPane.showMessageDialog(
+                        this,
+                        "End Date must be after Start Date."
+                );
+                return false;
+            }
+
+            long days = ChronoUnit.DAYS.between(start, end);
+
+            lblDays.setText(String.valueOf(days));
+
+            String selectedCar = cmbCar.getSelectedItem().toString();
+            String carId = selectedCar.split(" - ")[0];
+
+            Car car = carManager.findCarById(carId);
+
+            if (car == null) {
+                javax.swing.JOptionPane.showMessageDialog(
+                        this,
+                        "Car not found."
+                );
+                return false;
+            }
+
+            lblDailyRent.setText(String.valueOf(car.getDailyRent()));
+
+            double amount = days * car.getDailyRent();
+
+            lblAmount.setText(String.format("%.3f", amount));
+
+            return true;
+
+        } catch (Exception e) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter dates in DD-MM-YYYY format."
+            );
+
+            return false;
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -504,14 +613,15 @@ private boolean calculateBookingInfo() {
                 .addComponent(jLabel12)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(34, 34, 34)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -521,9 +631,8 @@ private boolean calculateBookingInfo() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
-     
 
-    clearFields();
+        clearFields();
 
 
     }//GEN-LAST:event_btnClearActionPerformed
@@ -534,61 +643,73 @@ private boolean calculateBookingInfo() {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
 
+        if (!validateFields()) {
 
-    if (!validateFields()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Please fill in all fields."
+            );
+
+            return;
+        }
+
+        if (!calculateBookingInfo()) {
+            return;
+        }
+        String customerData = cmbCustomer.getSelectedItem().toString();
+        String[] customerParts = customerData.split(" - ", 2);
+
+        String carData = cmbCar.getSelectedItem().toString();
+        String[] carParts = carData.split(" - ", 2);
+
+        Car car = carManager.findCarById(carParts[0]);
+
+        if (!isCarAvailable(
+                car.getCarId(),
+                txtStartDate.getText().trim(),
+                txtEndDate.getText().trim())) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "This car is already booked during the selected period."
+            );
+
+            return;
+        }
+
+        if (car == null) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Selected car not found.");
+            return;
+        }
+        RentalBooking booking = new RentalBooking(
+                txtRentalID.getText(),
+                customerParts[0],
+                customerParts[1],
+                car.getCarId(),
+                car.getPlateNumber(),
+                txtStartDate.getText(),
+                txtEndDate.getText(),
+                txtPickupLocation.getText(),
+                txtReturnLocation.getText(),
+                Integer.parseInt(lblDays.getText()),
+                car.getDailyRent(),
+                Double.parseDouble(lblAmount.getText()),
+                "Booked"
+        );
+
+        bookingManager.addBooking(booking);
+
+        carManager.updateStatus(car.getCarId(), "Booked");
+
+        loadTable();
+        loadCars();
+        clearFields();
 
         javax.swing.JOptionPane.showMessageDialog(
                 this,
-                "Please fill in all fields."
+                "Booking added successfully!"
         );
-
-        return;
-    }
-
-    if (!calculateBookingInfo()) {
-    return;
-}
-    String customerData = cmbCustomer.getSelectedItem().toString();
-String[] customerParts = customerData.split(" - ", 2);
-
-String carData = cmbCar.getSelectedItem().toString();
-String[] carParts = carData.split(" - ", 2);
-
-Car car = carManager.findCarById(carParts[0]);
-
-if (car == null) {
-    javax.swing.JOptionPane.showMessageDialog(this,
-            "Selected car not found.");
-    return;
-}
-RentalBooking booking = new RentalBooking(
-        txtRentalID.getText(),
-        customerParts[0],
-        customerParts[1],
-        car.getCarId(),
-        car.getPlateNumber(),
-        txtStartDate.getText(),
-        txtEndDate.getText(),
-        txtPickupLocation.getText(),
-        txtReturnLocation.getText(),
-        Integer.parseInt(lblDays.getText()),
-        car.getDailyRent(),
-        Double.parseDouble(lblAmount.getText()),
-        "Booked"
-);
-
-bookingManager.addBooking(booking);
-
-carManager.updateStatus(car.getCarId(), "Booked");
-
-loadTable();
-loadCars();
-clearFields();
-
-javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Booking added successfully!"
-);
 
 
     }//GEN-LAST:event_btnAddActionPerformed
@@ -598,197 +719,211 @@ javax.swing.JOptionPane.showMessageDialog(
     }//GEN-LAST:event_txtPickupLocationActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        
 
-    String rentalId = txtRentalID.getText().trim();
+        String rentalId = txtRentalID.getText().trim();
 
-    if (rentalId.isEmpty()) {
+        if (rentalId.isEmpty()) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter or select a Rental ID."
+            );
+
+            return;
+        }
+
+        RentalBooking booking = bookingManager.findBookingById(rentalId);
+
+        if (booking == null) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Booking not found."
+            );
+
+            return;
+        }
+
+        int choice = javax.swing.JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to delete this booking?",
+                "Delete Booking",
+                javax.swing.JOptionPane.YES_NO_OPTION
+        );
+
+        if (choice != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        carManager.updateStatus(booking.getCarId(), "Available");
+
+        bookingManager.deleteBooking(rentalId);
+
+        loadTable();
+        loadCars();
+        clearFields();
 
         javax.swing.JOptionPane.showMessageDialog(
                 this,
-                "Please enter or select a Rental ID."
+                "Booking deleted successfully!"
         );
-
-        return;
-    }
-
-    RentalBooking booking = bookingManager.findBookingById(rentalId);
-
-    if (booking == null) {
-
-        javax.swing.JOptionPane.showMessageDialog(
-                this,
-                "Booking not found."
-        );
-
-        return;
-    }
-
-    int choice = javax.swing.JOptionPane.showConfirmDialog(
-            this,
-            "Are you sure you want to delete this booking?",
-            "Delete Booking",
-            javax.swing.JOptionPane.YES_NO_OPTION
-    );
-
-    if (choice != javax.swing.JOptionPane.YES_OPTION) {
-        return;
-    }
-
-    carManager.updateStatus(booking.getCarId(), "Available");
-
-    bookingManager.deleteBooking(rentalId);
-
-    loadTable();
-    loadCars();
-    clearFields();
-
-    javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "Booking deleted successfully!"
-    );
 
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
 
+        if (!validateEmptyFields()) {
 
-    if (!validateFields()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Please fill in all fields."
+            );
+            return;
+        }
+
+        if (!validateLocations()) {
+            return;
+        }
+
+        if (!calculateBookingInfo()) {
+            return;
+        }
+
+        RentalBooking oldBooking
+                = bookingManager.findBookingById(txtRentalID.getText().trim());
+
+        if (oldBooking == null) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Booking not found."
+            );
+            return;
+        }
+
+        String customerData = cmbCustomer.getSelectedItem().toString();
+        String[] customerParts = customerData.split(" - ", 2);
+
+        String carData = cmbCar.getSelectedItem().toString();
+        String[] carParts = carData.split(" - ", 2);
+
+        Car car = carManager.findCarById(carParts[0]);
+
+        if (car == null) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Selected car not found."
+            );
+            return;
+        }
+
+        RentalBooking booking = new RentalBooking(
+                txtRentalID.getText().trim(),
+                customerParts[0],
+                customerParts[1],
+                car.getCarId(),
+                car.getPlateNumber(),
+                txtStartDate.getText().trim(),
+                txtEndDate.getText().trim(),
+                txtPickupLocation.getText().trim(),
+                txtReturnLocation.getText().trim(),
+                Integer.parseInt(lblDays.getText()),
+                car.getDailyRent(),
+                Double.parseDouble(lblAmount.getText()),
+                "Booked"
+        );
+
+        if (!oldBooking.getCarId().equalsIgnoreCase(car.getCarId())) {
+
+            carManager.updateStatus(oldBooking.getCarId(), "Available");
+
+            carManager.updateStatus(car.getCarId(), "Booked");
+
+        } else {
+
+            carManager.updateStatus(car.getCarId(), "Booked");
+        }
+
+        bookingManager.updateBooking(booking);
+
+        loadTable();
+        loadCars();
+        clearFields();
 
         javax.swing.JOptionPane.showMessageDialog(
                 this,
-                "Please fill in all fields."
+                "Booking updated successfully!"
         );
-        return;
-    }
-
-    if (!calculateBookingInfo()) {
-        return;
-    }
-
-    RentalBooking oldBooking =
-            bookingManager.findBookingById(txtRentalID.getText().trim());
-
-    if (oldBooking == null) {
-
-        javax.swing.JOptionPane.showMessageDialog(
-                this,
-                "Booking not found."
-        );
-        return;
-    }
-
-    String customerData = cmbCustomer.getSelectedItem().toString();
-    String[] customerParts = customerData.split(" - ", 2);
-
-    String carData = cmbCar.getSelectedItem().toString();
-    String[] carParts = carData.split(" - ", 2);
-
-    Car car = carManager.findCarById(carParts[0]);
-
-    if (car == null) {
-
-        javax.swing.JOptionPane.showMessageDialog(
-                this,
-                "Selected car not found."
-        );
-        return;
-    }
-
-    RentalBooking booking = new RentalBooking(
-            txtRentalID.getText().trim(),
-            customerParts[0],
-            customerParts[1],
-            car.getCarId(),
-            car.getPlateNumber(),
-            txtStartDate.getText().trim(),
-            txtEndDate.getText().trim(),
-            txtPickupLocation.getText().trim(),
-            txtReturnLocation.getText().trim(),
-            Integer.parseInt(lblDays.getText()),
-            car.getDailyRent(),
-            Double.parseDouble(lblAmount.getText()),
-            "Booked"
-    );
-
-  
-    if (!oldBooking.getCarId().equalsIgnoreCase(car.getCarId())) {
-
-     
-        carManager.updateStatus(oldBooking.getCarId(), "Available");
-
-
-        carManager.updateStatus(car.getCarId(), "Booked");
-
-    } else {
-
-   
-        carManager.updateStatus(car.getCarId(), "Booked");
-    }
-
-    bookingManager.updateBooking(booking);
-
-    loadTable();
-    loadCars();
-    clearFields();
-
-    javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "Booking updated successfully!"
-    );
 
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
 
+        String rentalId = txtRentalID.getText().trim();
 
-    String rentalId = txtRentalID.getText().trim();
+        RentalBooking booking = bookingManager.searchBooking(rentalId);
 
-    RentalBooking booking = bookingManager.searchBooking(rentalId);
+        if (booking == null) {
 
-    if (booking == null) {
-
-        javax.swing.JOptionPane.showMessageDialog(
-                this,
-                "Booking not found."
-        );
-        return;
-    }
-
-    txtRentalID.setText(booking.getRentalId());
-    txtStartDate.setText(booking.getStartDate());
-    txtEndDate.setText(booking.getEndDate());
-    txtPickupLocation.setText(booking.getPickupLocation());
-    txtReturnLocation.setText(booking.getReturnLocation());
-
-    lblDailyRent.setText(String.valueOf(booking.getDailyRent()));
-    lblDays.setText(String.valueOf(booking.getNumberOfDays()));
-    lblAmount.setText(String.valueOf(booking.getEstimatedAmount()));
-
-    for (int i = 0; i < cmbCustomer.getItemCount(); i++) {
-        if (cmbCustomer.getItemAt(i).startsWith(booking.getCustomerId() + " -")) {
-            cmbCustomer.setSelectedIndex(i);
-            break;
+            javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Booking not found."
+            );
+            return;
         }
-    }
 
-    for (int i = 0; i < cmbCar.getItemCount(); i++) {
-        if (cmbCar.getItemAt(i).startsWith(booking.getCarId() + " -")) {
-            cmbCar.setSelectedIndex(i);
-            break;
+        txtRentalID.setText(booking.getRentalId());
+        txtStartDate.setText(booking.getStartDate());
+        txtEndDate.setText(booking.getEndDate());
+        txtPickupLocation.setText(booking.getPickupLocation());
+        txtReturnLocation.setText(booking.getReturnLocation());
+
+        lblDailyRent.setText(String.valueOf(booking.getDailyRent()));
+        lblDays.setText(String.valueOf(booking.getNumberOfDays()));
+        lblAmount.setText(String.valueOf(booking.getEstimatedAmount()));
+
+        for (int i = 0; i < cmbCustomer.getItemCount(); i++) {
+            if (cmbCustomer.getItemAt(i).startsWith(booking.getCustomerId() + " -")) {
+                cmbCustomer.setSelectedIndex(i);
+                break;
+            }
         }
-    }
+        String carItem = booking.getCarId();
 
+        Car car = carManager.findCarById(booking.getCarId());
+
+        if (car != null) {
+            carItem = car.getCarId() + " - "
+                    + car.getBrand() + " "
+                    + car.getModel();
+        }
+
+        boolean found = false;
+
+        for (int i = 0; i < cmbCar.getItemCount(); i++) {
+
+            if (cmbCar.getItemAt(i).startsWith(booking.getCarId() + " -")) {
+                cmbCar.setSelectedIndex(i);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            cmbCar.addItem(carItem);
+            cmbCar.setSelectedItem(carItem);
+        }
 
 
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-       loadTable();
+        loadTable();
 
-    loadCars();
+        loadCars();
 
-    clearFields();
+        clearFields();
 
 
     }//GEN-LAST:event_btnRefreshActionPerformed
@@ -807,42 +942,41 @@ javax.swing.JOptionPane.showMessageDialog(
 
     private void tblBookingsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBookingsMouseClicked
 
+        int row = tblBookings.getSelectedRow();
 
-    int row = tblBookings.getSelectedRow();
-
-    if (row == -1) {
-        return;
-    }
-
-    txtRentalID.setText(tblBookings.getValueAt(row, 0).toString());
-    txtStartDate.setText(tblBookings.getValueAt(row, 3).toString());
-    txtEndDate.setText(tblBookings.getValueAt(row, 4).toString());
-    txtPickupLocation.setText(tblBookings.getValueAt(row, 5).toString());
-    txtReturnLocation.setText(tblBookings.getValueAt(row, 6).toString());
-
-    lblDailyRent.setText(tblBookings.getValueAt(row, 7).toString());
-    lblDays.setText(tblBookings.getValueAt(row, 8).toString());
-    lblAmount.setText(tblBookings.getValueAt(row, 9).toString());
-
-    RentalBooking booking =
-            bookingManager.findBookingById(txtRentalID.getText());
-
-    if (booking != null) {
-
-        for (int i = 0; i < cmbCustomer.getItemCount(); i++) {
-            if (cmbCustomer.getItemAt(i).startsWith(booking.getCustomerId() + " -")) {
-                cmbCustomer.setSelectedIndex(i);
-                break;
-            }
+        if (row == -1) {
+            return;
         }
 
-        for (int i = 0; i < cmbCar.getItemCount(); i++) {
-            if (cmbCar.getItemAt(i).startsWith(booking.getCarId() + " -")) {
-                cmbCar.setSelectedIndex(i);
-                break;
+        txtRentalID.setText(tblBookings.getValueAt(row, 0).toString());
+        txtStartDate.setText(tblBookings.getValueAt(row, 3).toString());
+        txtEndDate.setText(tblBookings.getValueAt(row, 4).toString());
+        txtPickupLocation.setText(tblBookings.getValueAt(row, 5).toString());
+        txtReturnLocation.setText(tblBookings.getValueAt(row, 6).toString());
+
+        lblDailyRent.setText(tblBookings.getValueAt(row, 7).toString());
+        lblDays.setText(tblBookings.getValueAt(row, 8).toString());
+        lblAmount.setText(tblBookings.getValueAt(row, 9).toString());
+
+        RentalBooking booking
+                = bookingManager.findBookingById(txtRentalID.getText());
+
+        if (booking != null) {
+
+            for (int i = 0; i < cmbCustomer.getItemCount(); i++) {
+                if (cmbCustomer.getItemAt(i).startsWith(booking.getCustomerId() + " -")) {
+                    cmbCustomer.setSelectedIndex(i);
+                    break;
+                }
+            }
+
+            for (int i = 0; i < cmbCar.getItemCount(); i++) {
+                if (cmbCar.getItemAt(i).startsWith(booking.getCarId() + " -")) {
+                    cmbCar.setSelectedIndex(i);
+                    break;
+                }
             }
         }
-    }
 
     }//GEN-LAST:event_tblBookingsMouseClicked
 
