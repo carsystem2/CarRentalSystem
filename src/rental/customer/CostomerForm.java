@@ -431,14 +431,29 @@ private void refreshTable() {
         txtNatId.setText("");
     }
 private boolean isValidEmail(String email) {
-    
-    String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-    
-    if (email == null || email.isEmpty()) {
-        return false;
+        if (email == null) {
+            return false;
+        }
+
+        String cleanEmail = email;
+
+        if (cleanEmail.isEmpty() || cleanEmail.length() > 254) {
+            return false;
+        }
+
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        if (!java.util.regex.Pattern.matches(emailRegex, cleanEmail)) {
+            return false;
+        }
+
+        String lower = cleanEmail.toLowerCase();
+        if (lower.endsWith("@gamil.com") || lower.endsWith("@gmial.com") || 
+            lower.endsWith("@yaho.com") || lower.endsWith("@hotmial.com")) {
+            return false;
+        }
+
+        return true;
     }
-    return email.matches(emailRegex);
-}
     
     /**
      * @param args the command line arguments
