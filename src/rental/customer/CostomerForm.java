@@ -99,7 +99,7 @@ public class CostomerForm extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 102, 0));
-        jButton1.setText("Edite");
+        jButton1.setText("Edit");
         jButton1.addActionListener(this::jButton1ActionPerformed);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -183,7 +183,7 @@ public class CostomerForm extends javax.swing.JFrame {
                         .addComponent(jButton1)
                         .addGap(53, 53, 53)
                         .addComponent(jButton2)))
-                .addGap(0, 286, Short.MAX_VALUE))
+                .addGap(0, 287, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(203, 203, 203)
                 .addComponent(lab1)
