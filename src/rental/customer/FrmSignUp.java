@@ -288,13 +288,30 @@ public class FrmSignUp extends javax.swing.JFrame {
         }
         return true;
     } 
-    private boolean isValidEmail(String email) {
-    if (email == null || email.isEmpty()) {
-        return false;
+   private boolean isValidEmail(String email) {
+        if (email == null) {
+            return false;
+        }
+
+        String cleanEmail = email;
+
+        if (cleanEmail.isEmpty() || cleanEmail.length() > 254) {
+            return false;
+        }
+
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        if (!java.util.regex.Pattern.matches(emailRegex, cleanEmail)) {
+            return false;
+        }
+
+        String lower = cleanEmail.toLowerCase();
+        if (lower.endsWith("@gamil.com") || lower.endsWith("@gmial.com") || 
+            lower.endsWith("@yaho.com") || lower.endsWith("@hotmial.com")) {
+            return false;
+        }
+
+        return true;
     }
-    String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-    return email.matches(emailRegex);
-}
 private void clearFields() {
  txtUsername.setText("");
  txtPassword.setText("");
