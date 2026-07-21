@@ -17,6 +17,8 @@ public class FrmSignIn extends javax.swing.JFrame {
      */
     public FrmSignIn() {
         initComponents();
+        UserHelpers.readFile();
+        txtPassword.setText("");
     }
 
     /**
@@ -37,12 +39,13 @@ public class FrmSignIn extends javax.swing.JFrame {
         btnLogin = new javax.swing.JButton();
         cmbRole = new javax.swing.JComboBox<>();
         txtPassword = new javax.swing.JPasswordField();
+        btnSignUp = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 102));
-        jLabel1.setText("Car Rental System - Login");
+        jLabel1.setText("Car Rental System - Sign In");
 
         lable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lable1.setText("User Name:");
@@ -55,8 +58,9 @@ public class FrmSignIn extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel4.setText("Rank :");
 
+        btnLogin.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnLogin.setForeground(new java.awt.Color(0, 51, 153));
-        btnLogin.setText("Login");
+        btnLogin.setText("Sign In");
         btnLogin.addActionListener(this::btnLoginActionPerformed);
 
         cmbRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "User" }));
@@ -104,17 +108,27 @@ public class FrmSignIn extends javax.swing.JFrame {
                 .addComponent(btnLogin))
         );
 
+        btnSignUp.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnSignUp.setForeground(new java.awt.Color(0, 51, 153));
+        btnSignUp.setText("Sign Up");
+        btnSignUp.addActionListener(this::btnSignUpActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(jLabel1)))
+                        .addGap(50, 50, 50)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(33, 33, 33)
+                                .addComponent(jLabel1))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(94, 94, 94)
+                        .addComponent(btnSignUp)))
                 .addContainerGap(69, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -124,7 +138,9 @@ public class FrmSignIn extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(67, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnSignUp)
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         pack();
@@ -135,39 +151,38 @@ public class FrmSignIn extends javax.swing.JFrame {
     }//GEN-LAST:event_txtUsernameActionPerformed
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-          String username = txtUsername.getText();
-          String password = new String (txtPassword.getPassword());
-          String selectedRole = cmbRole.getSelectedItem().toString();
-        
-        if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter both Username and Password!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        boolean loginSuccessful = false;
-
-        if (selectedRole.equals("Admin")) {
-           
-            if (username.equals("admin") && password.equals("admin123")) {
-                loginSuccessful = true;
-            }
-        } else if (selectedRole.equals("User")) {
-           
-            if (username.equals("user") && password.equals("user123")) {
-                loginSuccessful = true;
-            }
-        }
-           if (loginSuccessful) {
-            JOptionPane.showMessageDialog(this, "Welcome " + username + " (" + selectedRole + ")!", "Success", JOptionPane.INFORMATION_MESSAGE);
-             CostomerForm mainForm = new CostomerForm(selectedRole); 
-            mainForm.setVisible(true);
-            
-            
-           
-        } else {
-            JOptionPane.showMessageDialog(this, "Invalid Username or Password for " + selectedRole + " role!", "Login Failed", JOptionPane.ERROR_MESSAGE);
-        }
-    
+    String username = txtUsername.getText().trim();
+ String password = new String(txtPassword.getPassword());
+ String selectedRole = cmbRole.getSelectedItem().toString();
+ if (username.isEmpty() || password.isEmpty()) {
+ JOptionPane.showMessageDialog(this,"Please enter both Username and Password!","Error",JOptionPane.ERROR_MESSAGE);
+ return;
+ }
+ if (selectedRole.equals("Admin")) {
+ if (username.equals("admin")&& password.equals("admin123")) {
+ JOptionPane.showMessageDialog(this,"Welcome Admin!","Success",JOptionPane.INFORMATION_MESSAGE);
+ CostomerForm mainForm = new CostomerForm("Admin");
+ mainForm.setVisible(true);
+ dispose();
+ } else {
+ JOptionPane.showMessageDialog(this,"Invalid Admin Username or Password!","Login Failed",JOptionPane.ERROR_MESSAGE);
+ }
+ } else {
+ User user = UserHelpers.authenticate(username, password);
+ if (user != null) {
+ JOptionPane.showMessageDialog(this,"Welcome " + user.getName() + "!","Login Successful",JOptionPane.INFORMATION_MESSAGE);
+ txtUsername.setText("");
+ txtPassword.setText("");
+ } else {
+ JOptionPane.showMessageDialog(this,"Invalid Username or Password!","Login Failed",JOptionPane.ERROR_MESSAGE);
+ }
+ }      
     }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void btnSignUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignUpActionPerformed
+    FrmSignUp signUpForm = new FrmSignUp();
+    signUpForm.setVisible(true);
+    }//GEN-LAST:event_btnSignUpActionPerformed
 
     /**
      * @param args the command line arguments
@@ -196,6 +211,7 @@ public class FrmSignIn extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLogin;
+    private javax.swing.JButton btnSignUp;
     private javax.swing.JComboBox<String> cmbRole;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;

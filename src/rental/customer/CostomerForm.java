@@ -43,14 +43,14 @@ public class CostomerForm extends javax.swing.JFrame {
         btnDelete = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         lab1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
-        jTextField7 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
+        txtId = new javax.swing.JTextField();
+        txtName = new javax.swing.JTextField();
+        txtPhone = new javax.swing.JTextField();
+        txtEmail = new javax.swing.JTextField();
+        txtAddress = new javax.swing.JTextField();
+        txtLicense = new javax.swing.JTextField();
+        txtExpiry = new javax.swing.JTextField();
+        txtNatId = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -60,6 +60,7 @@ public class CostomerForm extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -94,7 +95,7 @@ public class CostomerForm extends javax.swing.JFrame {
         lab1.setFont(new java.awt.Font("Segoe UI", 3, 24)); // NOI18N
         lab1.setText("Customer Manegment System");
 
-        jTextField1.addActionListener(this::jTextField1ActionPerformed);
+        txtId.addActionListener(this::txtIdActionPerformed);
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 102, 0));
@@ -125,6 +126,11 @@ public class CostomerForm extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel9.setText("Nationality / ID :");
 
+        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(0, 0, 204));
+        jButton2.setText("Clear");
+        jButton2.addActionListener(this::jButton2ActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -138,16 +144,16 @@ public class CostomerForm extends javax.swing.JFrame {
                             .addComponent(jLabel8))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
-                            .addComponent(jTextField8)))
+                            .addComponent(txtExpiry, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
+                            .addComponent(txtNatId)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addGap(12, 12, 12)
-                        .addComponent(jTextField6))
+                        .addComponent(txtLicense))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField5))
+                        .addComponent(txtAddress))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
@@ -156,10 +162,10 @@ public class CostomerForm extends javax.swing.JFrame {
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1)
-                            .addComponent(jTextField4)
-                            .addComponent(jTextField3)
-                            .addComponent(jTextField2))))
+                            .addComponent(txtId)
+                            .addComponent(txtEmail)
+                            .addComponent(txtPhone)
+                            .addComponent(txtName))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 649, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -174,8 +180,10 @@ public class CostomerForm extends javax.swing.JFrame {
                         .addGap(36, 36, 36)
                         .addComponent(btnDelete)
                         .addGap(39, 39, 39)
-                        .addComponent(jButton1)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(jButton1)
+                        .addGap(53, 53, 53)
+                        .addComponent(jButton2)))
+                .addGap(0, 286, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(203, 203, 203)
                 .addComponent(lab1)
@@ -190,35 +198,35 @@ public class CostomerForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtLicense, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel7))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtExpiry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNatId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel9))
                         .addGap(21, 21, 21))
                     .addGroup(layout.createSequentialGroup()
@@ -229,7 +237,8 @@ public class CostomerForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnDelete)
                     .addComponent(btnAdd)
-                    .addComponent(jButton1))
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
@@ -238,14 +247,14 @@ public class CostomerForm extends javax.swing.JFrame {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
        
-        String id = jTextField1.getText();
-        String name = jTextField2.getText();
-        String phone = jTextField3.getText();
-        String email = jTextField4.getText();
-        String address = jTextField5.getText();
-        String license = jTextField6.getText();
-        String expiry = jTextField7.getText();
-        String natId = jTextField8.getText();
+        String id = txtId.getText();
+        String name = txtName.getText();
+        String phone = txtPhone.getText();
+        String email = txtEmail.getText();
+        String address = txtAddress.getText();
+        String license = txtLicense.getText();
+        String expiry = txtExpiry.getText();
+        String natId = txtNatId.getText();
         String status = "ACTIVE"; 
         
         if (id.isEmpty() || name.isEmpty() || phone.isEmpty()) {
@@ -274,9 +283,9 @@ public class CostomerForm extends javax.swing.JFrame {
  
     }//GEN-LAST:event_btnAddActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtIdActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
                                           
@@ -311,14 +320,14 @@ public class CostomerForm extends javax.swing.JFrame {
     
     if (selectedRow != -1) {
    
-        jTextField1.setText(tableModel.getValueAt(selectedRow, 0).toString()); 
-        jTextField2.setText(tableModel.getValueAt(selectedRow, 1).toString()); 
-        jTextField3.setText(tableModel.getValueAt(selectedRow, 2).toString()); 
-        jTextField4.setText(tableModel.getValueAt(selectedRow, 3).toString()); 
-        jTextField5.setText(tableModel.getValueAt(selectedRow, 4).toString()); 
-        jTextField6.setText(tableModel.getValueAt(selectedRow, 5).toString()); 
-        jTextField7.setText(tableModel.getValueAt(selectedRow, 6).toString()); 
-        jTextField8.setText(tableModel.getValueAt(selectedRow, 7).toString()); 
+        txtId.setText(tableModel.getValueAt(selectedRow, 0).toString()); 
+        txtName.setText(tableModel.getValueAt(selectedRow, 1).toString()); 
+        txtPhone.setText(tableModel.getValueAt(selectedRow, 2).toString()); 
+        txtEmail.setText(tableModel.getValueAt(selectedRow, 3).toString()); 
+        txtAddress.setText(tableModel.getValueAt(selectedRow, 4).toString()); 
+        txtLicense.setText(tableModel.getValueAt(selectedRow, 5).toString()); 
+        txtExpiry.setText(tableModel.getValueAt(selectedRow, 6).toString()); 
+        txtNatId.setText(tableModel.getValueAt(selectedRow, 7).toString()); 
     }
     }//GEN-LAST:event_tblCustomersMouseClicked
 
@@ -331,14 +340,14 @@ public class CostomerForm extends javax.swing.JFrame {
         return;
     }
 
-    String id = jTextField1.getText();
-    String name = jTextField2.getText();
-    String phone = jTextField3.getText();
-    String email = jTextField4.getText();
-    String address = jTextField5.getText();
-    String license = jTextField6.getText();
-    String expiry = jTextField7.getText();
-    String natId = jTextField8.getText();
+    String id = txtId.getText();
+    String name = txtName.getText();
+    String phone = txtPhone.getText();
+    String email = txtEmail.getText();
+    String address = txtAddress.getText();
+    String license = txtLicense.getText();
+    String expiry = txtExpiry.getText();
+    String natId = txtNatId.getText();
 
    
     if (id.isEmpty() || name.isEmpty() || phone.isEmpty()) {
@@ -373,17 +382,25 @@ public class CostomerForm extends javax.swing.JFrame {
     JOptionPane.showMessageDialog(this, "Customer updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    txtId.setText("");
+    txtName.setText("");
+    txtPhone.setText("");
+    txtEmail.setText("");
+    txtAddress.setText("");
+    txtLicense.setText("");
+    txtExpiry.setText("");
+    txtNatId.setText("");  
+    tblCustomers.clearSelection();
+    }//GEN-LAST:event_jButton2ActionPerformed
 private void applyPermissions() {
-        if (userRole != null && userRole.equals("User")) {
-            btnAdd.setEnabled(false);
-            btnDelete.setEnabled(false);
-            
-          
-//btnAdd.setVisible(false);
-//btnDelete.setVisible(false);
-            
-        }
-    }
+ boolean isAdmin =userRole != null&& userRole.equalsIgnoreCase("Admin");
+ btnAdd.setEnabled(isAdmin);
+ btnDelete.setEnabled(isAdmin);
+ jButton1.setEnabled(isAdmin);
+}
+
 private void refreshTable() {
     
         tableModel.setRowCount(0); // Clear the table first
@@ -404,14 +421,14 @@ private void refreshTable() {
     }
 
     private void clearFields() {
-        jTextField1.setText("");
-        jTextField2.setText("");
-        jTextField3.setText("");
-        jTextField4.setText("");
-        jTextField5.setText("");
-        jTextField6.setText("");
-        jTextField7.setText("");
-        jTextField8.setText("");
+        txtId.setText("");
+        txtName.setText("");
+        txtPhone.setText("");
+        txtEmail.setText("");
+        txtAddress.setText("");
+        txtLicense.setText("");
+        txtExpiry.setText("");
+        txtNatId.setText("");
     }
 private boolean isValidEmail(String email) {
     
@@ -449,6 +466,7 @@ private boolean isValidEmail(String email) {
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -459,15 +477,15 @@ private boolean isValidEmail(String email) {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
     private javax.swing.JLabel lab1;
     private javax.swing.JTable tblCustomers;
+    private javax.swing.JTextField txtAddress;
+    private javax.swing.JTextField txtEmail;
+    private javax.swing.JTextField txtExpiry;
+    private javax.swing.JTextField txtId;
+    private javax.swing.JTextField txtLicense;
+    private javax.swing.JTextField txtName;
+    private javax.swing.JTextField txtNatId;
+    private javax.swing.JTextField txtPhone;
     // End of variables declaration//GEN-END:variables
 }
