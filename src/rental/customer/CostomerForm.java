@@ -399,6 +399,7 @@ private void applyPermissions() {
  btnAdd.setEnabled(isAdmin);
  btnDelete.setEnabled(isAdmin);
  jButton1.setEnabled(isAdmin);
+ jButton2.setEnabled(isAdmin);
 }
 
 private void refreshTable() {
