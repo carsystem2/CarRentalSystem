@@ -217,8 +217,7 @@ public class FrmSignUp extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
        String username = txtUsername.getText();
- String password =
- new String(txtPassword.getPassword());
+ String password = new String(txtPassword.getPassword());
  if (username.isEmpty() || password.isEmpty()
  || txtId.getText().isEmpty()
  || txtName.getText().isEmpty()
@@ -251,15 +250,14 @@ public class FrmSignUp extends javax.swing.JFrame {
  txtLicense.getText(),
  txtExpiry.getText(),
  txtNatId.getText(),
- "ACTIVE"
- );
+ "ACTIVE");
+ // save the object in arraylist
  User user = new User(username,password,txtId.getText(),txtName.getText());
  CustomerHelpers.customers.add(customer);
  CustomerHelpers.writeFile();
  UserHelpers.addUser(user);
  UserHelpers.writeFile();
- JOptionPane.showMessageDialog(
- this,"Sign Up Successful. Welcome "+ customer.getCustomerName());
+ JOptionPane.showMessageDialog(this,"Sign Up Successful. Welcome "+ customer.getCustomerName());
  clearFields();
 
     }//GEN-LAST:event_jButton1ActionPerformed

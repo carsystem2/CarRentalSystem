@@ -22,8 +22,7 @@ public static ArrayList<User> users = new ArrayList<>();
  }
  public static boolean exists(String username) {
  for (User user : users) {
- if (user.getUsername()
- .equalsIgnoreCase(username)) {
+ if (user.getUsername().equalsIgnoreCase(username)) {
  return true;
  }
  }
@@ -35,8 +34,7 @@ public static ArrayList<User> users = new ArrayList<>();
  public static User authenticate(
  String username, String password) {
  for (User user : users) {
- boolean usernameMatches =
- user.getUsername().equalsIgnoreCase(username);
+ boolean usernameMatches = user.getUsername().equalsIgnoreCase(username);
  boolean passwordMatches = user.getPassword().equals(password);
  if (usernameMatches && passwordMatches) {
  return user;

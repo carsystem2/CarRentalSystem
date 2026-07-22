@@ -20,7 +20,7 @@ public static ArrayList<Customer> getCustomres()
 }
 public static boolean exists(String customerId) {
   for (Customer c : customers) {
-    if (c.getCustomerId().trim().equalsIgnoreCase(customerId.trim())) {
+    if (c.getCustomerId().equalsIgnoreCase(customerId)) {
         return true;
             }
         }
